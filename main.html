@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Savee 💕</title>
+<style>
+  :root{--bg1:#fff1f5;--bg2:#ffd6e3;--ink:#5a1230;--pink:#e8336d;--soft:#ffffffcc;--opt:#fff}
+  @media (prefers-color-scheme: dark){:root{--bg1:#2a0d1a;--bg2:#4a1530;--ink:#ffe3ec;--pink:#ff5c93;--soft:#ffffff14;--opt:#ffffff1f}}
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%}
+  body{font-family:Georgia,"Times New Roman",serif;color:var(--ink);background:linear-gradient(160deg,var(--bg1),var(--bg2));overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center}
+  .card{position:relative;z-index:2;background:var(--soft);backdrop-filter:blur(8px);border-radius:28px;padding:36px 26px 30px;width:min(92vw,460px);box-shadow:0 20px 60px #e8336d33;animation:in .5s}
+  @keyframes in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  .emoji{font-size:60px;animation:beat 1.2s infinite}
+  @keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  h1{font-size:clamp(26px,6.5vw,36px);margin:12px 0 8px;color:var(--pink);font-style:italic}
+  p{font-size:18px;line-height:1.55;margin-bottom:22px}
+  .opts{display:grid;gap:12px}
+  .opts.two{grid-template-columns:1fr 1fr}
+  button{font:inherit;font-size:17px;border:0;border-radius:18px;padding:14px 16px;cursor:pointer;transition:transform .15s,background .15s;color:var(--ink);background:var(--opt);box-shadow:0 4px 12px #e8336d22}
+  button:hover{transform:translateY(-2px) scale(1.03);background:var(--pink);color:#fff}
+  #yes{background:var(--pink);color:#fff;border-radius:999px}
+  #no{border-radius:999px;color:#777}
+  .row{display:flex;gap:16px;justify-content:center;align-items:center;min-height:64px}
+  .dots{display:flex;gap:8px;justify-content:center;margin-top:24px}
+  .dots i{width:9px;height:9px;border-radius:50%;background:var(--pink);opacity:.25}
+  .dots i.on{opacity:1;transform:scale(1.3)}
+  .heart{position:fixed;top:-40px;z-index:1;animation:fall linear forwards;pointer-events:none}
+  @keyframes fall{to{transform:translateY(115vh) rotate(360deg);opacity:.2}}
+  small{display:block;margin-top:14px;font-size:15px;opacity:.8}
+</style>
+</head>
+<body>
+<div class="card" id="card"></div>
+
+<script>
+// ✏️ Edit your name here:
+const FROM = "____";
+
+const pages = [
+  {e:"👋", t:"Hey Savee!", p:"I made a little something just for you. Ready to see it?",
+   o:["Sure, show me 😊","What is it? 🤔"]},
+  {e:"🎬", t:"First, a quick one…", p:"What’s your favourite thing to do?", key:"thing",
+   o:["Watching movies 🎬","Long walks 🌅","Trying new food 🍕","Listening to music 🎵"]},
+  {e:"🌇", t:"Dream evening", p:"Pick the perfect vibe for an evening:", key:"vibe",
+   o:["Sunset by the sea 🌊","Cozy little café ☕","Late-night drive 🚗","Stargazing ✨"]},
+  {e:"🍫", t:"Sweet tooth?", p:"What would make you smile the most?", key:"treat",
+   o:["Chocolate 🍫","Ice cream 🍦","Flowers 🌸","Pizza 🍕"]},
+  {e:"🙈", t:"Okay, a secret…", p:"I’ve been wanting to tell you something for a while. Want to hear it?",
+   o:["Tell me 😳","I think I know 🙈"]},
+  {e:"💌", t:"Savee…", ask:true,
+   p:"You’re kind, you’re beautiful, and you make my days brighter just by being you.<br>So I have to ask…<br><b>Do you like me too?</b> 🥺"}
+];
+let i=0, picks={};
+const card=document.getElementById('card');
+
+function dots(){return '<div class="dots">'+pages.map((_,k)=>'<i class="'+(k===i?'on':'')+'"></i>').join('')+'</div>'}
+
+function render(){
+  const pg=pages[i];
+  let body='';
+  if(pg.ask){
+    body='<div class="row"><button id="yes">Yes 💖</button><button id="no">No 😅</button></div>';
+  }else{
+    body='<div class="opts '+(pg.o.length==2?'':'two')+'">'+pg.o.map((x,k)=>'<button data-k="'+k+'">'+x+'</button>').join('')+'</div>';
+  }
+  card.style.animation='none';card.offsetWidth;card.style.animation='';
+  card.innerHTML='<div class="emoji">'+pg.e+'</div><h1>'+pg.t+'</h1><p>'+pg.p+'</p>'+body+dots();
+  if(pg.ask){setupAsk();return}
+  card.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{
+    if(pg.key)picks[pg.key]=pg.o[b.dataset.k].replace(/\s\S+$/,'');
+    i++;render();
+  });
+}
+
+function setupAsk(){
+  const yes=document.getElementById('yes'),no=document.getElementById('no');
+  const labels=['No 😅','Are you sure? 🥺','Really? 😢','Please… 🙏','I’ll be sad 😭'];
+  let tries=0;
+  function dodge(e){
+    e.preventDefault();tries++;
+    no.textContent=labels[Math.min(tries,labels.length-1)];
+    no.style.position='fixed';
+    no.style.left=Math.random()*(innerWidth-no.offsetWidth-20)+10+'px';
+    no.style.top=Math.random()*(innerHeight-no.offsetHeight-20)+10+'px';
+    yes.style.transform='scale('+Math.min(1+tries*0.12,2)+')';
+  }
+  no.addEventListener('mouseover',dodge);
+  no.addEventListener('touchstart',dodge,{passive:false});
+  no.addEventListener('click',dodge);
+  yes.onclick=celebrate;
+}
+
+function celebrate(){
+  const plan=[picks.thing,picks.vibe,picks.treat].filter(Boolean).map(s=>s.toLowerCase());
+  card.innerHTML='<div class="emoji">🥰</div><h1>Thank you, Savee!</h1>'+
+    '<p>You just made my whole day. I like you a lot too, Savee. 💕</p>'+
+    (plan.length?'<p>Based on your picks, our perfect evening would be:<br><b>'+plan.join(' + ')+'</b> ✨</p>':'')+
+    '<p style="margin:0">Maybe we can make it happen sometime?<small>— '+FROM+'</small></p>';
+  for(let k=0;k<60;k++)setTimeout(heart,k*40);
+  setInterval(heart,120);
+}
+
+function heart(){
+  const h=document.createElement('div');
+  h.className='heart';
+  h.textContent=['💖','💕','💗','🌸','✨'][Math.floor(Math.random()*5)];
+  h.style.left=Math.random()*100+'vw';
+  h.style.fontSize=14+Math.random()*28+'px';
+  h.style.animationDuration=4+Math.random()*5+'s';
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),9500);
+}
+setInterval(heart,600);
+render();
+</script>
+</body>
+</html>
